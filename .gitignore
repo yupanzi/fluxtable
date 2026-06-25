@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+coverage/
+.vscode/
+.idea/
+storybook-static/
+playwright-report/
+test-results/

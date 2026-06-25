@@ -1,0 +1,58 @@
+name: release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      # Trusted Publishing（OIDC）需要 npm CLI >= 11.5.1；Node 22 自带的是 npm 10.x。
+      # @semantic-release/npm 内部 shell 调用全局 npm publish，故升级全局 npm。
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test:run
+
+      # 免 token 发布：不设 NODE_AUTH_TOKEN / NPM_TOKEN。
+      # id-token: write + npm >= 11.5.1 + npmjs.com 端配好 Trusted Publisher 后，
+      # npm CLI 自动用短期 OIDC 令牌换证发布，并自动生成 provenance。
+      # GITHUB_TOKEN 仍需要：semantic-release 用它打 tag、建 GitHub Release。
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm exec semantic-release

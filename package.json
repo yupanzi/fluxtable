@@ -1,0 +1,107 @@
+{
+  "name": "@yupanzi/fluxtable",
+  "version": "1.0.0",
+  "private": false,
+  "packageManager": "pnpm@10.18.3",
+  "description": "高性能 React 表格 / 数据网格组件，RxJS 流 + pipeline 驱动，支持三向虚拟化与透视表（cross-table / cross-tree-table）。",
+  "license": "MIT",
+  "author": "fluxtable contributors",
+  "keywords": [
+    "react",
+    "table",
+    "data-grid",
+    "virtualized",
+    "pivot",
+    "cross-table",
+    "rxjs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yupanzi/fluxtable.git"
+  },
+  "homepage": "https://github.com/yupanzi/fluxtable#readme",
+  "bugs": {
+    "url": "https://github.com/yupanzi/fluxtable/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "./dist/fluxtable.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/fluxtable.d.ts",
+      "import": "./dist/fluxtable.js",
+      "default": "./dist/fluxtable.js"
+    },
+    "./pivot": {
+      "types": "./dist/fluxtable-pivot.d.ts",
+      "import": "./dist/fluxtable-pivot.js",
+      "default": "./dist/fluxtable-pivot.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build",
+    "test-storybook": "test-storybook",
+    "test-storybook:ci": "concurrently -k -s first -n SB,TEST -c magenta,blue \"http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && test-storybook --url http://127.0.0.1:6006\"",
+    "release": "semantic-release",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3",
+    "@playwright/test": "^1.59.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@storybook/addon-a11y": "^10.3.5",
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
+    "@storybook/test-runner": "^0.24.4",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "@vitejs/plugin-react": "^5.0.0",
+    "@vitest/coverage-v8": "^4.0.10",
+    "antd": "^6.2.0",
+    "concurrently": "^9.1.0",
+    "dayjs": "^1.11.13",
+    "http-server": "^14.1.1",
+    "husky": "^9.1.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "semantic-release": "^25.0.3",
+    "storybook": "^10.3.5",
+    "typescript": "^5.7.3",
+    "vite": "^7.0.0",
+    "vitest": "^4.0.10",
+    "wait-on": "^8.0.1",
+    "xlsx": "^0.18.5"
+  },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "resize-observer-polyfill": "^1.5.1",
+    "rxjs": "^7.8.2",
+    "styled-components": "^6.1.19"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "xlsx": {
+      "optional": true
+    }
+  }
+}

@@ -1,0 +1,69 @@
+import React from 'react'
+import styled from 'styled-components'
+import { icons } from '../common-views'
+import type { TableTransform } from '../interfaces'
+import { internals } from '../internals'
+import { traverseColumn } from '../utils'
+import { warnTransformsDeprecated } from './warnTransformsDeprecated'
+
+const HeaderCellWithTips = styled.div`
+  display: flex;
+  align-items: center;
+
+  .tip-icon-wrapper {
+    margin-left: 2px;
+  }
+
+  .tip-icon {
+    display: flex;
+    fill: currentColor;
+  }
+`
+
+/** @deprecated transform 用法已经过时，请使用 pipeline 来对表格进行拓展 */
+export interface TipsOptions {
+  Balloon?: any
+  Tooltip?: any
+}
+
+/** @deprecated transform 用法已经过时，请使用 pipeline 来对表格进行拓展 */
+export function makeTipsTransform({ Balloon, Tooltip }: TipsOptions): TableTransform {
+  warnTransformsDeprecated('makeTipsTransform')
+
+  return traverseColumn((col) => {
+    if (!col.features?.tips) {
+      return col
+    }
+
+    const justifyContent = col.align === 'right' ? 'flex-end' : col.align === 'center' ? 'center' : 'flex-start'
+
+    return {
+      ...col,
+      title: (
+        <HeaderCellWithTips style={{ justifyContent }}>
+          {internals.safeRenderHeader(col)}
+          {Balloon ? (
+            // 优先使用注入的 Balloon 组件（带 trigger / closable 的气泡）
+            <Balloon
+              closable={false}
+              trigger={
+                <div className="tip-icon-wrapper">
+                  <icons.Info className="tip-icon" />
+                </div>
+              }
+            >
+              {col.features.tips}
+            </Balloon>
+          ) : (
+            // 退化为注入的 Tooltip 组件（title 形式）
+            <Tooltip title={col.features.tips}>
+              <div className="tip-icon-wrapper">
+                <icons.Info className="tip-icon" />
+              </div>
+            </Tooltip>
+          )}
+        </HeaderCellWithTips>
+      ),
+    }
+  })
+}
