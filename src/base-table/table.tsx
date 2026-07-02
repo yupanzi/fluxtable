@@ -593,6 +593,24 @@ export class BaseTable extends React.Component<BaseTableProps, BaseTableState> {
           this.setState(sizeAndOffset)
         }),
     )
+
+    // 每当表格自身的布局尺寸发生变化时（例如从 display:none 的 tab 中切换为可见、
+    // 或容器宽度变化），重新计算横向粘性滚动条与锁列的展示状态。
+    // 修复：表格首次在隐藏的 tab 内以 forceRender 渲染时宽度为 0，
+    // updateStickyScroll 据此算出 hasScroll=false；切换为可见后既不会触发 props 更新
+    // 也不会触发 window resize，导致 hasScroll 不被重算、横向滚动条缺失（需排序等操作
+    // 引发重渲染后才出现）。这里复用已有的 ResizeObserver 流，按表格宽度去重后重算。
+    this.rootSubscription.add(
+      richVisibleRects$
+        .pipe(
+          op.map(({ targetRect }) => Math.round(targetRect.right - targetRect.left)),
+          op.distinctUntilChanged(),
+        )
+        .subscribe(() => {
+          this.updateStickyScroll()
+          this.adjustNeedRenderLock()
+        }),
+    )
   }
 
   componentWillUnmount() {
